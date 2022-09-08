@@ -30,14 +30,14 @@
 
 # Executables
 *.exe
-*.out
+.out
 *.app
 *.i*86
 *.x86_64
 *.hex
 
 # Debug files
-*.dSYM/
+.dSYM/
 *.su
 *.idb
 *.pdb
