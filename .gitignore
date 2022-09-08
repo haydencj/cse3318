@@ -1,8 +1,10 @@
+.DS_Store
+
 # Prerequisites
 *.d
 
 # Object files
-*.o
+.o
 *.ko
 *.obj
 *.elf
@@ -29,12 +31,12 @@
 *.dylib
 
 # Executables
-*.exe
+.exe
 .out
-*.app
-*.i*86
-*.x86_64
-*.hex
+.app
+.i*86
+.x86_64
+.hex
 
 # Debug files
 .dSYM/
@@ -50,3 +52,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+*
+!*.*
+!*/
