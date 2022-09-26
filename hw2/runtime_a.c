@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <math.h>
 void runtime_increment(int N);
 void runtime_print(int N);
 void runtime_print_long(int N, char* long_str);
+void runtime_pow(int N);
 
 int main(void){
     int L = 1000, i;
@@ -13,9 +15,10 @@ int main(void){
     str[i] = '\0';
 
     // call the functions here and record the time they take.
-    runtime_increment(100);
+    //runtime_increment(1000);
     //runtime_print(100);
     //runtime_print_long(100, str);
+    runtime_pow(25);
  }
 void runtime_increment(int N){
 int i, k, t, res = 0;
@@ -38,4 +41,11 @@ void runtime_print_long(int N, char* long_str){
         for(k = 1; k <= N; k++)
             for(t = 1; t <= N; t++)
                 printf("%s\n", long_str);
+}
+
+void runtime_pow(int N){
+    int i, res = 0;
+    for(i = 0; i <= pow(2.0, (double)N); i=i+1) {
+        res = res + 1;
+    }
 }
