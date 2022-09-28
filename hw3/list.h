@@ -6,7 +6,7 @@
 #ifndef LIST_H
 #define	LIST_H
 
-typedef struct node * nodePT;  // POINTER to NODE (memory address of NODE)
+typedef struct node* nodePT;  // POINTER to NODE (memory address of NODE)
 struct node {
     int data;
     struct node * next;  // it is the same as: nodePT next;
