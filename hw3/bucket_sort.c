@@ -116,8 +116,8 @@ void insert_to_array(nodePT* buckets, int arr[], int N) { //inserts sorted linke
 				arr[j] = current->data;
 				j++;
 			}
-			destroy_list(current);
 		}
+		destroy_list(buckets[i]);
 	}
 	print_array(arr, N);
 }
@@ -140,7 +140,7 @@ void bucket_sort(int arr[], int N){
 	printf("\nBucketsort: min=%d, max=%d, N=%d buckets\n", min, max, N);
 
 	for(i=0; i<N; i++) {
-		index=floor((((arr[i]-min) * N)/ (max-min+1) ));
+		index=floor(((arr[i]-(double)min) * N)/ ((1+(double)max) - (double)min ));
 		printf("arr[%d]= %6d, idx = %d\n", i, arr[i], index);
 
 		buckets[index] = insert_sorted(buckets[index], new_node(arr[i]));
@@ -152,20 +152,22 @@ void bucket_sort(int arr[], int N){
 	}
 
 	insert_to_array(buckets, arr, N);
+
+	//free bucket array
+	free(buckets);
 }
 
 nodePT insert_sorted(nodePT L, nodePT newP){
 
 	nodePT head = L;
-	nodePT prev = NULL;
-	
+	//nodePT current = L;
 	if(head == NULL) { //if bucket is empty
-		head = newP;
+		L = newP;
 	}
 
 	else if(newP->data < head->data) { //if new node is less than the head, replace head.
 		newP->next = head;
-		head = newP;
+		L = newP;
 	}
 
 	
@@ -177,7 +179,7 @@ nodePT insert_sorted(nodePT L, nodePT newP){
 		head->next = newP;
 	}
 
-	return head;
+	return L;
 }
 
 int* file_to_array(char filename[], int* size){
@@ -235,7 +237,6 @@ void run1(){
 	int* array = file_to_array(filename, size_ptr); //will change int* size value
 
 	bucket_sort(array, size);
-	
 	free(array);
 }
 
