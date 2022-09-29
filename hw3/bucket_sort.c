@@ -58,6 +58,18 @@ void print_list_horiz(struct node * my_list) {
     }
 	printf("\n Length of above list = %d\n", i);
 }
+
+void destroy_list(nodePT L) {
+    nodePT next;
+	nodePT curr = L;
+	L = NULL;   // can remove this line, not needed
+    while (curr != NULL) {
+        next = curr->next;
+        free(curr);
+        curr = next;
+    }
+}
+
 /* 
 compile with -g to collect debugging info needed for Valgrind ( -lm links the math library): 
 gcc -g bucket_sort.c list.c -lm
@@ -77,6 +89,9 @@ void print_array(int arr[], int N);
 void bucket_sort(int arr[], int N);
 nodePT insert_sorted(nodePT L, nodePT newP);
 int* file_to_array(char filename[], int* size);
+void insert_to_array(nodePT* buckets, int arr[], int N);
+void destroy_list(nodePT L);
+
 /* // recommended helper functions:
 - function to insert a new node in a sorted list.
 nodePT insert_sorted(nodePT L, nodePT newP)
@@ -85,6 +100,27 @@ void bucket_sort(int arr[], int N)
 - function to read file and read the data into an array, edits int size.
 int* file_to_array(charfilename[], int* size)
 */
+
+void insert_to_array(nodePT* buckets, int arr[], int N) { //inserts sorted linked lists into array and frees lists.
+	int i=0, j=0;
+	nodePT current = NULL;
+	for(i=0;i<N;i++) {
+		current = buckets[i];
+		if(current != NULL){
+			
+			arr[j] = current->data;
+			j++;
+
+			while(current->next != NULL) {
+				current=current->next;
+				arr[j] = current->data;
+				j++;
+			}
+			destroy_list(current);
+		}
+	}
+	print_array(arr, N);
+}
 
 void bucket_sort(int arr[], int N){
 	int i, index, max=0, min=0;
@@ -96,9 +132,9 @@ void bucket_sort(int arr[], int N){
 		else if(arr[i]<min) min = arr[i];
 	}
 
-	nodePT* nodePT_arr = malloc(N*sizeof(nodePT));
+	nodePT* buckets = malloc(N*sizeof(nodePT));
 	for(i=0; i<N; i++) {
-		nodePT_arr[i] = NULL;
+		buckets[i] = NULL;
 	}
 
 	printf("\nBucketsort: min=%d, max=%d, N=%d buckets\n", min, max, N);
@@ -107,32 +143,41 @@ void bucket_sort(int arr[], int N){
 		index=floor((((arr[i]-min) * N)/ (max-min+1) ));
 		printf("arr[%d]= %6d, idx = %d\n", i, arr[i], index);
 
-		nodePT_arr[index] = insert_sorted(nodePT_arr[index], new_node(arr[i]));
+		buckets[index] = insert_sorted(buckets[index], new_node(arr[i]));
 	}
 
 	for(i=0;i<N;i++){
 		printf("------ List at index %d :", i);
-		print_list_horiz(nodePT_arr[i]);
+		print_list_horiz(buckets[i]);
 	}
+
+	insert_to_array(buckets, arr, N);
 }
 
 nodePT insert_sorted(nodePT L, nodePT newP){
-	if(L == NULL) {
-		L = newP;
-		return L;
-	}
 
-	nodePT current = L;
+	nodePT head = L;
 	nodePT prev = NULL;
-
-	while(newP->data > current->data) {
-		prev = current;
-		current = current->next;
-		newP->next = current;
-		prev->next = newP;
+	
+	if(head == NULL) { //if bucket is empty
+		head = newP;
 	}
 
-	return L;
+	else if(newP->data < head->data) { //if new node is less than the head, replace head.
+		newP->next = head;
+		head = newP;
+	}
+
+	
+	else {
+		while(head->next != NULL && newP->data > head->next->data) {
+			head = head->next;
+		}
+		newP->next = head->next;
+		head->next = newP;
+	}
+
+	return head;
 }
 
 int* file_to_array(char filename[], int* size){
@@ -165,6 +210,7 @@ int* file_to_array(char filename[], int* size){
 		i++;
 	}
 	print_array(arr, *size);
+	fclose(fp);
 	return arr;
 }
 
@@ -179,7 +225,6 @@ void print_array(int arr[], int N){
 
 //-------------------------------------------------------------
 
-
 void run1(){
 	int size, i=0;
 	int* size_ptr = &size;
@@ -187,10 +232,9 @@ void run1(){
 
 	printf("\nEnter the filename: ");
 	scanf("%s", filename);
-	int* array = file_to_array("data1.txt", size_ptr); //will change int* size value
+	int* array = file_to_array(filename, size_ptr); //will change int* size value
 
 	bucket_sort(array, size);
-	//linked lists to original array
 	
 	free(array);
 }
