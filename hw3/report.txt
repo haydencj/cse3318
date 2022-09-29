@@ -1,8 +1,9 @@
-Hayden Johnson
+Hayden Johnson ID: 1001871835
 
 Where did you run your program?
-- I ran my program on my mac zsh shell, as well as on the UTA omega server.
+- I ran my program in a zsh shell on my Macbook, as well as on the UTA omega server.
 
 data1.txt was sorted correctly and did not have any errors.
 neg1.txt was sorted correctly and did not have any errors.
 dex1.txt was sorted correctly and did not have any errors.
+student.txt was sorted correctly and did not have any errors.

@@ -1,4 +1,5 @@
 /* 
+ * Hayden Johnson ID: 1001878135
  * Updated 2/17/2022 - Alexandra Stefan
  */
 
@@ -7,7 +8,7 @@
 #include <math.h>
 #include <string.h>
 
-//#include "list.h"
+#include "list.h"
 
 /*
 TO DO LIST:
@@ -29,46 +30,6 @@ STEPS TO RUN BUCKET SORT
 	3. For each list in B, concatenate it (or copy back into A in this order),
        destroy the list (if needed).
 */
- // POINTER to NODE (memory address of NODE)
-struct node {
-    int data;
-    struct node * next;  // it is the same as: nodePT next;
-};
-typedef struct node* nodePT; 
-
-struct node * new_node(int value_in) {
-    struct node * result = (struct node *) malloc(sizeof (struct node));
-    result->data = value_in;
-    result->next = NULL;
-    return result;
-}
-
-void print_list_horiz(struct node * my_list) {
-    if (my_list == NULL) {
-		printf("\n<print_list_horiz> : List is NULL\n");
-        return;
-    }
-    int i = 0;
-    struct node * curr;
-
-    printf("\n List items: ");
-    for (i = 0, curr = my_list; (curr != NULL); curr = curr->next) {
-        printf("%5d    ", curr->data);
-        i++;
-    }
-	printf("\n Length of above list = %d\n", i);
-}
-
-void destroy_list(nodePT L) {
-    nodePT next;
-	nodePT curr = L;
-	L = NULL;   // can remove this line, not needed
-    while (curr != NULL) {
-        next = curr->next;
-        free(curr);
-        curr = next;
-    }
-}
 
 /* 
 compile with -g to collect debugging info needed for Valgrind ( -lm links the math library): 
@@ -90,7 +51,6 @@ void bucket_sort(int arr[], int N);
 nodePT insert_sorted(nodePT L, nodePT newP);
 int* file_to_array(char filename[], int* size);
 void insert_to_array(nodePT* buckets, int arr[], int N);
-void destroy_list(nodePT L);
 
 /* // recommended helper functions:
 - function to insert a new node in a sorted list.
