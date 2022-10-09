@@ -1,0 +1,81 @@
+gcc -g heap_calls.c heap.c
+valgrind --leak-check=full ./a.out
+==185== Memcheck, a memory error detector
+==185== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==185== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==185== Command: ./a.out
+==185==
+This program will call the heap functions.
+ in function make_heap, in DEBUG MODE, printing array BEFORE it gets turned into a heap :
+Heap:  size: 3, capacity : 3
+indexes:           0,      1,      2,
+values:           10,     20,     43,
+
+in function make_heap, in DEBUG MODE, printing array after sink_down at index 0.
+Heap:  size: 3, capacity : 3
+indexes:           0,      1,      2,
+values:           43,     20,     10,
+
+Heap:  size: 3, capacity : 3
+indexes:           0,      1,      2,
+values:           43,     20,     10,
+
+removed:     43
+Heap:  size: 2, capacity : 3
+indexes:           0,      1,
+values:           20,     10,
+
+peek:        20
+Heap:  size: 2, capacity : 3
+indexes:           0,      1,
+values:           20,     10,
+
+add:         17
+Heap:  size: 3, capacity : 3
+indexes:           0,      1,      2,
+values:           20,     10,     17,
+
+removed:     20
+Heap:  size: 2, capacity : 3
+indexes:           0,      1,
+values:           17,     10,
+
+removed:     17
+Heap:  size: 1, capacity : 3
+indexes:           0,
+values:           10,
+
+After call to destroy (1)
+Heap:  size: 0, capacity : 0
+indexes:
+values:
+
+Created empty heap:
+Heap:  size: 0, capacity : 11
+indexes:
+values:
+
+add:        204
+Heap:  size: 1, capacity : 11
+indexes:           0,
+values:          204,
+
+After call to destroy(2)
+Heap:  size: 0, capacity : 0
+indexes:
+values:
+
+After call to destroy(3)
+Heap:  size: 0, capacity : 0
+indexes:
+values:
+
+==185==
+==185== HEAP SUMMARY:
+==185==     in use at exit: 0 bytes in 0 blocks
+==185==   total heap usage: 3 allocs, 3 frees, 1,080 bytes allocated
+==185==
+==185== All heap blocks were freed -- no leaks are possible
+==185==
+==185== For lists of detected and suppressed errors, rerun with: -s
+==185== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
