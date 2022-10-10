@@ -9,7 +9,8 @@
 
 struct heap_struct make_heap_empty(int cap){
     struct heap_struct heap;
-    heap.items = (int*) calloc(cap, sizeof(int));
+    int *arr = calloc(cap, sizeof(int));
+    heap.items = arr;
     heap.capacity = cap;
     heap.N = 0;
 
@@ -26,19 +27,20 @@ struct heap_struct make_heap(int N, int * arr){
     print_heap(heap);
 
     int i;
-    for(i = (heap.N-1)/2; i>=0; i--) sink_down(i, heap.N, heap.items);
-
-    printf("in function make_heap, in DEBUG MODE, printing array after sink_down at index 0.\n");
-    print_heap(heap);
-
+    for(i = (heap.N/2)-1; i>=0; i--) {
+        sink_down(i, heap.N, heap.items);
+        printf("in function make_heap, in DEBUG MODE, printing array after sink_down at index %d.\n", i);
+        print_heap(heap);
+    }
     return heap;
 }
 
 
 void destroy(struct heap_struct * heapP){
-    //int i;
-    //for(i=0; i<heapP->N; i++) free(heapP->items[i]);
     free(heapP->items);
+    heapP->items = NULL;
+    heapP->capacity = 0;
+    heapP->N = 0;
 }
 
 /*
@@ -79,11 +81,11 @@ void swim_up(int idx, int * arr){
     int swap;
     int idx_actual = idx-1; //bc starting at index 0
 
-    while( (idx_actual>0) && (arr[idx_actual]>arr[idx_actual/2]) ) {
+    while( (idx_actual>0) && (arr[idx_actual]>arr[ (idx_actual-1) / 2]) ) {
         swap = arr[idx_actual]; 
-        arr[idx_actual] = arr[idx_actual/2];
-        arr[idx_actual/2] = swap;
-        idx_actual = idx_actual/2;
+        arr[idx_actual] = arr[ (idx_actual-1) / 2];
+        arr[ (idx_actual-1) /2] = swap;
+        idx_actual = (idx_actual-1) / 2;
     }
 }
 
@@ -93,10 +95,11 @@ void sink_down(int i, int N, int * arr){
     int imv = idxOfMaxValue(arr, i, left, right, N);
     int swap;
 
-    while(imv!=i) {
+    while( (imv!=i) && (imv<=N) ) {
         swap = arr[imv];
         arr[imv] = arr[i];
         arr[i] = swap;
+        i = imv;
         left = (2*i)+1;
         right = (2*i)+2;
         imv = idxOfMaxValue(arr, i, left, right, N);
@@ -104,10 +107,24 @@ void sink_down(int i, int N, int * arr){
 }
 
 void add(struct heap_struct * heapP, int new_item){
-    heapP->N = heapP->N + 1;
-    int idx = heapP->N - 1;
-    heapP->items[idx] = new_item;
-    swim_up(idx, heapP->items);
+
+    int size = heapP->N;
+    int cap = heapP->capacity;
+
+    if(size == cap) {
+        printf("resizing\n");
+        heapP->items = (int*) realloc(heapP->items, sizeof(int)*(2*cap));
+        heapP->capacity = cap*2;
+        heapP->items[size] = new_item;
+        heapP->N++;
+    }
+
+    else {
+        heapP->items[size] = new_item;
+        heapP->N++;;
+    }
+
+    swim_up(size, heapP->items);
 }
 
 int peek(struct heap_struct heapS){
@@ -122,4 +139,3 @@ int poll(struct heap_struct * heapP){
     sink_down(0, heapP->N, heapP->items);
     return max;
 }
-
