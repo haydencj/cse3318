@@ -24,7 +24,7 @@ int main()   {
 	char fname[501];
 	int debug = 0;
 	struct heap_struct heapS;
-	printf("This program will call the heap functions.\n ");   
+	printf("This program will call the heap functions.\n");   
    
 
 	N = 3;
