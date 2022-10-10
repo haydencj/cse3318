@@ -51,18 +51,24 @@ int main() {
     fgets(line,100,fp);
 	token = strtok(line, " ");
 
-    for(int i=0; i<P;i++) {
+    for(i=0; i<P;i++) {
         printf("Operation number %d, string: %s\n", i+1, token);
 
-        if(atoi(token) && (atoi(token) != '*')) {
+        if(atoi(token)) {
             printf("add:     %6d\n", atoi(token));	
             add(&heap, atoi(token));
             print_heap(heap);
         }
 
         else if(token[0] == '*') {
-            printf("removed: %6d\n", poll(&heap) );	
-            print_heap(heap);
+            if(heap.N==0){
+                printf("Empty heap. No removed performed.\n");
+                print_heap(heap);
+            }
+            else{
+                printf("removed: %6d\n", poll(&heap) );	
+                print_heap(heap);
+            }
         }
 
         else if(!strcasecmp(token, "P")) {
@@ -72,6 +78,7 @@ int main() {
 
         token = strtok(NULL, " ");
     }
+    destroy(&heap);
     fclose(fp);
 }
 

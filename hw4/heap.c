@@ -65,11 +65,11 @@ void print_heap(struct heap_struct heapS){
 int idxOfMaxValue(int* arr, int i, int left, int right, int N) {
     int imv = i;
 
-    if( (left<=N) && (arr[left]>arr[imv])) {
+    if( (left<N) && (arr[left]>arr[imv])) {
         imv = left;
     }
 
-    if( (right<=N) && (arr[right]>arr[imv])) {
+    if( (right<N) && (arr[right]>arr[imv])) {
         imv = right;
     }
 
@@ -79,13 +79,12 @@ int idxOfMaxValue(int* arr, int i, int left, int right, int N) {
 //index 0: left child is 2i+1, right child is 2i+2, parent is (i-1)/2
 void swim_up(int idx, int * arr){
     int swap;
-    int idx_actual = idx-1; //bc starting at index 0
 
-    while( (idx_actual>0) && (arr[idx_actual]>arr[ (idx_actual-1) / 2]) ) {
-        swap = arr[idx_actual]; 
-        arr[idx_actual] = arr[ (idx_actual-1) / 2];
-        arr[ (idx_actual-1) /2] = swap;
-        idx_actual = (idx_actual-1) / 2;
+    while( (idx>0) && (arr[idx]>arr[ (idx-1) / 2]) ) {
+        swap = arr[idx]; 
+        arr[idx] = arr[ (idx-1) / 2];
+        arr[ (idx-1) /2] = swap;
+        idx= (idx-1) / 2;
     }
 }
 
@@ -95,7 +94,7 @@ void sink_down(int i, int N, int * arr){
     int imv = idxOfMaxValue(arr, i, left, right, N);
     int swap;
 
-    while( (imv!=i) && (imv<=N) ) {
+    while( (imv!=i) && (imv<N) ) {
         swap = arr[imv];
         arr[imv] = arr[i];
         arr[i] = swap;
@@ -121,7 +120,7 @@ void add(struct heap_struct * heapP, int new_item){
 
     else {
         heapP->items[size] = new_item;
-        heapP->N++;;
+        heapP->N++;
     }
 
     swim_up(size, heapP->items);
