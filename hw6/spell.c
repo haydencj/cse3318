@@ -12,7 +12,7 @@ https://www.geeksforgeeks.org/pass-2d-array-parameter-c/
 
 Worst case time complexity to compute the edit distance from T test words
  to D dictionary words where all words have length MAX_LEN:
-Student answer:  Theta(............)
+Student answer:  Theta(DT*MAX_LEN^2)
 
 
 Worst case to do an unsuccessful binary search in a dictionary with D words, when 
@@ -22,7 +22,17 @@ Student answer:  Theta(............)
 
 
 /* You can write helper functions here */
-
+int calc_dist(char* first, char* second, int i, int j, int** table) {
+	if(i == 0 && j == 0) return 0;
+	else if(i == 0) return j;
+	else if(j == 0) return i;
+	else {
+		if(first[i-1] == second[j-1]) return table[i-1][j-1];
+		else {
+			return min(table[i-1][j],table[i][j-1],table[i-1][j-1]);
+		}
+	}
+}
 
 /*
 Parameters:
@@ -34,7 +44,23 @@ print_table - If 1, the table with the calculations for the edit distance will b
 Return:  the value of the edit distance (e.g. 3)
 */
 int edit_distance(char * first_string, char * second_string, int print_table){
-	return -1;  // replace this line with your code
+	int rows = strlen(first_string) + 1;
+	int cols = strlen(second_string) + 1;
+	int i, j;
+	int table[rows][cols];
+	int dist;
+
+	for(i=0; i<rows; i++) {
+		for(j=0; j<cols; j++) {
+			table[i][j] = calc_dist(first_string, second_string, i, j, table);
+		}
+	}
+
+	if(print_table == 1) {
+
+	}
+
+	return table[rows-1][cols-1];  // final edit distance, bottom right of table
 }
 	  
 
