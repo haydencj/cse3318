@@ -1,0 +1,50 @@
+Grading criteria for Hw5  (edit distance and spell checker)
+220 points total
+
+20 pts - Valgrind  
+
+20 pts - correct edit distance computation (part 1 of program)
+	3 - correct behavior for print/no print argument
+	8 - iterative (with loop). There should be no recursion used in computing the edit distance.
+	9 - correct calculation of all edit distance (for all cases tested on).
+
+25 pts printing the table - partial credit:
+	5 - correct top row, i.e. column labels (letter) 
+	5 - correct leftmost column, i.e. row labels (letter)
+	8 - inside cells (all cells that contain a number) are aligned. 
+		5 - cells are aligned.
+		3 - cells have exactly 3 spaces (including the number in the table) (between |  |)
+	5 - horizontal lines of dashes are printed and match the length of the row
+	2 - other 
+	
+25 pts - sort the dictionary in alphabetical order
+15 pts - binary search
+	10 pts - use binary search when searching in the sorted dictionary
+	 5 pts - print the number of words 'probed' during binary search
+	
+25 pts - separators written in the output file are identical to those in the text file
+	10 pts - handles the simple case when the text stars with a letter (a word) there is exactly one separator between any 2 words and there is one separator at the end of file after the last word.
+	10 pts - handles 2 or more consecutive separators (e.g. dot and space, several consecutive spaces, etc)
+	 5 pts - handles the case when there is no separator after the last word. (That word should also be correctly extracted and processed.)
+
+30 pts - write correct words in the output file
+	10 pts - original word printed when found in the dictionary. Note that the search is CASE INSENSITIVE, but in the output file word must be as in the text (e.g. Can, not can) 
+	 5 pts - original word printed when user selects option 0 (keep word as is)
+	 5 pts - word given by the user (with option -1) is correctly written in the output file 
+	10 pts - word selected by the user from the list of most similar words in dictionary
+
+5 pts - time complexity to find the most similar words in the dictionary. Give this for the worst case when all the words (dictionary and misspelled) have MAX_LEN.
+5 pts - time complexity for binary search. Give this for the worst case when all the words (dictionary and misspelled) have MAX_LEN.
+5 - if any of the files fails to open, program will not crash and will not generate memory errors. 
+	
+10 pts - correct display for each processed word: OK-if found in the dictionary or if not, the menu of options for corrections and takes the user answers.
+
+35 pts - Correct spell check part (part 2 of program: read in files and do spell check)
+	15 - minimum distance is computed correct and printed before the words are printed.
+    20 - all words at minimum distance are found and printed and they have consecutive numbers starting from 1 that would be used by the user to select the word is wanted.
+
+
+Penalties:
+Code with compilation error : 0 credit
+Code that crashes will loose 30%-100% of the program score based on the gravity of the situation.
+Global variables are not allowed. 
