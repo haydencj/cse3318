@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "spell.h"
 
@@ -22,20 +23,70 @@ Student answer:  Theta(............)
 
 
 /* You can write helper functions here */
-char** test_to_array(char * filename) {
-	FILE* fp = fopen(filename, "r");
-	if(!fp) {
-		printf("Test file could not be opened.\n");
-		return NULL;
+int binary_search(char** dict, int size, char* token) {
+	//convert to lowercase for search
+	char new_token[strlen(token)];
+
+	for(int i = 0; i<strlen(token); i++){
+  		new_token[i] = tolower(token[i]);
 	}
 
-	char* token;
-	char line[101];
-	int i = 0;
+	printf("\nBinary search for: %s\n", new_token);
+	int counter = 0;;
+	int left = 0;
+	int right = size-1;
 
-	return 0;
+	while(left <= right) {
+		int m = (left+right)/2;
+		if(strcmp(new_token, dict[m]) == 0) { // match found
+			printf("dict[%d] = %s\n", m, dict[m]);
+			counter++;
+			return counter;
+		}
+		else if(strcmp(new_token, dict[m]) < 0) {// <
+			printf("dict[%d] = %s\n", m, dict[m]);
+			right = m-1;
+			counter++;
+		}
+
+		else { // >
+			printf("dict[%d] = %s\n", m, dict[m]);
+			left = m+1;
+			counter++;
+		}
+	}
+	printf("Not found\n\n");
+	return counter;
+}
+
+void check(char* output, char* input, char** dict, int dict_size) {
+	FILE* out_fp = fopen(output, "w");
+	FILE* in_fp = fopen(input, "r");
+	if(!out_fp || !in_fp) {
+		printf("File(s) could not be opened.\n");
+	}
+
+	else {
+		char line[101];
+		char* token;
+		int count;
+
+		fgets(line, 101, in_fp);
+		token = strtok (line," ,.!?");
+		while (token != NULL) {
+			//do comparison
+			count = binary_search(dict, dict_size, token);
+			printf("---> |%s| (words compared when searching: %d\n", token, count);
+			token = strtok (NULL, " ,.-");
+		}
+		
+	}
+
+	fclose(in_fp);
+	fclose(out_fp);
 
 }
+
 
 char** dict_to_array(char * filename, int* size) {
 	FILE* fp = fopen(filename, "r");
@@ -158,12 +209,13 @@ void spell_check(char * testname, char * dictname, int printOn){
 	int dict_size = 0;
 	int* dict_ptr = &dict_size;
 
-	//char** test_arr = file_to_array(testname);
+	char out_filename[20] = "out_";
+	strcat(out_filename, testname);
+	printf("Corrected output filename: %s\n", out_filename);
+	
 	printf("\nLoading the dictionary file: %s\n", dictname);
 	char** dict_arr = dict_to_array(dictname, dict_ptr);
-	printf("\nDictionary has size: %d\n", dict_size);
-
-	printf("\n\n");
+	printf("\nDictionary has size: %d\n\n", dict_size);
 
 	if(printOn == 1) {
 		int i;
@@ -182,6 +234,8 @@ void spell_check(char * testname, char * dictname, int printOn){
 		for(i = 0; i<dict_size; i++) {
 			printf("%d. %s\n", i, dict_arr[i]);
 		}
+
+		check(out_filename, testname, dict_arr, dict_size);
 	}
 
 	else {
