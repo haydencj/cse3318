@@ -23,7 +23,7 @@ Student answer:  Theta(............)
 
 
 /* You can write helper functions here */
-int binary_search(char** dict, int size, char* token) {
+int binary_search(char** dict, int size, char* token, int printOn) {
 	//convert to lowercase for search
 	char new_token[strlen(token)];
 
@@ -31,7 +31,7 @@ int binary_search(char** dict, int size, char* token) {
   		new_token[i] = tolower(token[i]);
 	}
 
-	printf("\nBinary search for: %s\n", new_token);
+	if(printOn) printf("\nBinary search for: %s\n", new_token);
 	int counter = 0;;
 	int left = 0;
 	int right = size-1;
@@ -39,27 +39,27 @@ int binary_search(char** dict, int size, char* token) {
 	while(left <= right) {
 		int m = (left+right)/2;
 		if(strcmp(new_token, dict[m]) == 0) { // match found
-			printf("dict[%d] = %s\n", m, dict[m]);
+			if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
 			counter++;
 			return counter;
 		}
 		else if(strcmp(new_token, dict[m]) < 0) {// <
-			printf("dict[%d] = %s\n", m, dict[m]);
+			if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
 			right = m-1;
 			counter++;
 		}
 
 		else { // >
-			printf("dict[%d] = %s\n", m, dict[m]);
+			if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
 			left = m+1;
 			counter++;
 		}
 	}
-	printf("Not found\n\n");
+	if(printOn) printf("Not found\n\n");
 	return counter;
 }
 
-void check(char* output, char* input, char** dict, int dict_size) {
+void check(char* output, char* input, char** dict, int dict_size, int printOn) {
 	FILE* out_fp = fopen(output, "w");
 	FILE* in_fp = fopen(input, "r");
 	if(!out_fp || !in_fp) {
@@ -75,11 +75,12 @@ void check(char* output, char* input, char** dict, int dict_size) {
 		token = strtok (line," ,.!?");
 		while (token != NULL) {
 			//do comparison
-			count = binary_search(dict, dict_size, token);
-			printf("---> |%s| (words compared when searching: %d\n", token, count);
+			count = binary_search(dict, dict_size, token, printOn);
+
+			printf("---> |%s| (words compared when searching: %d)\n", token, count);
+
 			token = strtok (NULL, " ,.-");
 		}
-		
 	}
 
 	fclose(in_fp);
@@ -235,12 +236,13 @@ void spell_check(char * testname, char * dictname, int printOn){
 			printf("%d. %s\n", i, dict_arr[i]);
 		}
 
-		check(out_filename, testname, dict_arr, dict_size);
+		check(out_filename, testname, dict_arr, dict_size, 1);
 	}
 
 	else {
 		//sort dict
 		qsort(dict_arr, dict_size, sizeof(*dict_arr), cmpstr);
+		check(out_filename, testname, dict_arr, dict_size, 0);
 	}
 }
 
