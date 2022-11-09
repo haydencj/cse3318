@@ -18,12 +18,12 @@ Student answer:  Theta(DT*MAX_LEN^2)
 
 Worst case to do an unsuccessful binary search in a dictionary with D words, when 
 all dictionary words and the searched word have length MAX_LEN 
-Student answer:  Theta(............)
+Student answer:  Theta(MAX_LEN*lg(D))
 */
 
 
 /* You can write helper functions here */
-int binary_search(char** dict, int size, char* token, int printOn) {
+int binary_search(char** dict, int size, char* token, int* counter, int printOn) {
 	//convert to lowercase for search
 	char new_token[strlen(token)];
 
@@ -32,31 +32,28 @@ int binary_search(char** dict, int size, char* token, int printOn) {
 	}
 
 	if(printOn) printf("\nBinary search for: %s\n", new_token);
-	int counter = 0;;
+	
+	(*counter) = 0;
 	int left = 0;
 	int right = size-1;
 
 	while(left <= right) {
 		int m = (left+right)/2;
 		if(strcmp(new_token, dict[m]) == 0) { // match found
-			if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
-			counter++;
-			return counter;
+			return m; //index of token in dict
 		}
 		else if(strcmp(new_token, dict[m]) < 0) {// <
-			if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
 			right = m-1;
-			counter++;
 		}
 
 		else { // >
-			if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
 			left = m+1;
-			counter++;
 		}
+		if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
+		(*counter)++;
 	}
 	if(printOn) printf("Not found\n\n");
-	return counter;
+	return -1; //not found
 }
 
 void check(char* output, char* input, char** dict, int dict_size, int printOn) {
@@ -69,15 +66,15 @@ void check(char* output, char* input, char** dict, int dict_size, int printOn) {
 	else {
 		char line[101];
 		char* token;
-		int count;
+		int counter=0, result;
 
 		fgets(line, 101, in_fp);
 		token = strtok (line," ,.!?");
 		while (token != NULL) {
 			//do comparison
-			count = binary_search(dict, dict_size, token, printOn);
+			result = binary_search(dict, dict_size, token, &counter, printOn);
 
-			printf("---> |%s| (words compared when searching: %d)\n", token, count);
+			printf("---> |%s| (words compared when searching: %d)\n", token, counter);
 
 			token = strtok (NULL, " ,.-");
 		}
