@@ -30,8 +30,10 @@ char** test_to_array(char * filename) {
 	}
 
 	char* token;
-	char line[100];
+	char line[101];
 	int i = 0;
+
+	return 0;
 
 }
 
@@ -42,26 +44,38 @@ char** dict_to_array(char * filename, int* size) {
 		return NULL;
 	}
 
-	char* token;
-	char line[100];
-	int i = 0;
+	char line[101]; //100+1 for null terminator
+	int i;
 	
 	//get size of dict from file
-	fgets(line, 100, fp);
+	fgets(line, 101, fp);
 	strtok(line, "\n"); 
 	*size = atoi(line);
 
 	//create 2d arr
-	char dict_arr[*size][100];
+	char **dict_arr = malloc((*size) * sizeof(char*)); //create an array of char pointers, one for each string (char *):
+	for (i = 0; i < *size; ++i) {
+    	dict_arr[i] = (char*) malloc(101 * sizeof(char)); //allocate space for each string
+	}
+
+	i=0;
 
 	//get each token and put in arr
-	for(i = 0; i < *size; i++) {
-		fgets(line, 100, fp);
-		dict_arr[i] = token;
+	while (fgets(line, 101, fp)) {
+		strtok(line, "\n");
+		strcpy(dict_arr[i], line); //copy data from line (on stack) to arr (on heap)
+		i++;
 	}
 
 	fclose(fp);
 	return dict_arr;
+}
+
+int cmpstr(const void* str1, const void* str2)
+{
+    const char* str1_p = *(const char**)str1;
+    const char* str2_p = *(const char**)str2;
+    return strcmp(str1_p, str2_p);
 }
 
 int min(int a, int b, int c){
@@ -142,23 +156,37 @@ printOn - If 1 it will print EXTRA debugging/tracing information (in addition to
 */
 void spell_check(char * testname, char * dictname, int printOn){
 	int dict_size = 0;
-	int* dict_ptr = &dict_ptr;
+	int* dict_ptr = &dict_size;
 
 	//char** test_arr = file_to_array(testname);
-	printf("Loading the dictionary file: %s\n", dictname);
+	printf("\nLoading the dictionary file: %s\n", dictname);
 	char** dict_arr = dict_to_array(dictname, dict_ptr);
-	printf("Dictionary has size: %d", dict_size);
+	printf("\nDictionary has size: %d\n", dict_size);
 
-	for(int i = 0; i<dict_size; i++){
-		printf("%s\n", dict_arr[i]);
-	}
+	printf("\n\n");
 
 	if(printOn == 1) {
+		int i;
 
+		printf(" Original dictionary:\n");
+		//dict print unsorted
+		for(i = 0; i<dict_size; i++) {
+			printf("%d. %s\n", i, dict_arr[i]);
+		}
+
+		//sort dict
+		qsort(dict_arr, dict_size, sizeof(*dict_arr), cmpstr);
+
+		printf("\n Sorted dictionary (alphabetical order):\n");
+		//dict print sorted
+		for(i = 0; i<dict_size; i++) {
+			printf("%d. %s\n", i, dict_arr[i]);
+		}
 	}
 
 	else {
-
+		//sort dict
+		qsort(dict_arr, dict_size, sizeof(*dict_arr), cmpstr);
 	}
 }
 

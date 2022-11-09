@@ -1,0 +1,18 @@
+spell check steps:
+
+- qsort the dictionary
+http://www.cplusplus.com/reference/cstdlib/qsort/
+https://www.geeksforgeeks.org/function-pointer-in-c/
+
+- when you search for a word and calculate edit distance
+  make sure to use lowercase word, but when you copy 
+  it back, use original captilization. 
+
+1. take a word
+2. search for it in the sorted dictionary (using binary search)
+3. if you dont find an exact match give the options
+	-1 type correction
+	 0 leave word as is
+	1-# words with minimum edit distance
+4. return corrected word to the file
+
