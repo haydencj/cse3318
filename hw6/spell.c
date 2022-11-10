@@ -50,39 +50,39 @@ int binary_search(char** dict, int size, char* token, int* counter, int printOn)
 			left = m+1;
 		}
 		if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
-		(*counter)++;
+		(*counter)++; //precedence
 	}
 	if(printOn) printf("Not found\n\n");
 	return -1; //not found
 }
 
-void check(char* output, char* input, char** dict, int dict_size, int printOn) {
+int check(char* output, char* input, char** dict, int dict_size, int printOn) {
 	FILE* out_fp = fopen(output, "w");
 	FILE* in_fp = fopen(input, "r");
 	if(!out_fp || !in_fp) {
 		printf("File(s) could not be opened.\n");
+		return 0;
 	}
 
-	else {
-		char line[101];
-		char* token;
-		int counter=0, result;
+	char line[101];
+	char* token;
+	int counter=0, result;
 
-		fgets(line, 101, in_fp);
-		token = strtok (line," ,.!?");
-		while (token != NULL) {
-			//do comparison
-			result = binary_search(dict, dict_size, token, &counter, printOn);
+	fgets(line, 101, in_fp);
+	token = strtok (line," ,.!?");
+	while (token != NULL) {
+		//do binary search
+		result = binary_search(dict, dict_size, token, &counter, printOn);
+		//if found, write to output file
+		//if not found, identify the most similar words in the dictionary and give these options to the user as to what correction to be used for this word in the output file
+		printf("---> |%s| (words compared when searching: %d)\n", token, counter);
 
-			printf("---> |%s| (words compared when searching: %d)\n", token, counter);
-
-			token = strtok (NULL, " ,.-");
-		}
+		token = strtok (NULL, " ,.-");
 	}
 
 	fclose(in_fp);
 	fclose(out_fp);
-
+	return 1;
 }
 
 
