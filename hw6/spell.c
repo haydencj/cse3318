@@ -64,21 +64,48 @@ int check(char* output, char* input, char** dict, int dict_size, int printOn) {
 		return 0;
 	}
 
-	char line[101];
-	char* token;
+	// char line[101];
+	// char* token;
+	// int counter=0, result;
+
+	// fgets(line, 101, in_fp);
+	// token = strtok (line," ,.!?");
+	// while (token != NULL) {
+	// 	//do binary search
+	// 	result = binary_search(dict, dict_size, token, &counter, printOn);
+	// 	//if found, write to output file
+	// 	//if not found, identify the most similar words in the dictionary and give these options to the user as to what correction to be used for this word in the output file
+	// 	printf("---> |%s| (words compared when searching: %d)\n", token, counter);
+
+	// 	token = strtok (NULL, " ,.-");
+	// }
+
+	char buffer[101];
+    int c=0;
+    int i=0;
 	int counter=0, result;
 
-	fgets(line, 101, in_fp);
-	token = strtok (line," ,.!?");
-	while (token != NULL) {
-		//do binary search
-		result = binary_search(dict, dict_size, token, &counter, printOn);
-		//if found, write to output file
-		//if not found, identify the most similar words in the dictionary and give these options to the user as to what correction to be used for this word in the output file
-		printf("---> |%s| (words compared when searching: %d)\n", token, counter);
+    while((c = fgetc(in_fp)) != EOF){
+ 
+        if(((ispunct(c)) || (c == 32))) { //32 ascii value for whitespace
+            if(buffer[0] != '\0') {
+                //do binary search
+				printf("\nbuffer: %s\n", buffer);
+				result = binary_search(dict, dict_size, buffer, &counter, printOn);
+				//if found, write to output file
+				//if not found, identify the most similar words in the dictionary and give these options to the user as to what correction to be used for this word in the output file
+				printf("---> |%s| (words compared when searching: %d)\n", buffer, counter);
+                memset(buffer, 0, 101);
+                i=0;
+            }
 
-		token = strtok (NULL, " ,.-");
-	}
+        }
+
+        else{
+            buffer[i] = c;
+            i++;
+        }
+    }
 
 	fclose(in_fp);
 	fclose(out_fp);

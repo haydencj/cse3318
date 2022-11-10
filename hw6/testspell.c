@@ -17,21 +17,25 @@ And then just parse the word when you hit a separator
 */
 
     char buffer[101];
-    int c;
-    int i;
-    while((c = fgetc(in_fp)) != EOF){ 
-        if((ispunct(c)) || (c == 32)) { //32 ascii value for whitespace
-            printf("%s\n", buffer);
-            memset(buffer, 0, 101);
-            i=0;
+    int c=0;
+    int i=0;
+    int s_count=0;; //separator count
+
+    while(c != EOF){
+        c = fgetc(in_fp);
+        if( ((ispunct(c)) || (c == 32)) ) { //32 ascii value for whitespace
+            if(buffer[0] != '\0') {
+                fprintf(out_fp,"%s\n", buffer);
+                memset(buffer, 0, 101);
+                i=0;
+            }
         }
 
-        else {
+        else{
             buffer[i] = c;
             i++;
         }
     }
-
 
     fclose(out_fp);
     fclose(in_fp);
@@ -39,9 +43,9 @@ And then just parse the word when you hit a separator
 }
 
 int main() {
-    char testname[101] = "text1.txt";
+    char testname[101];
     printf("Enter the text file name: ");
-    //scanf("%s", testname);
+    scanf("%s", testname);
 
     char out_filename[20] = "out_";
 	strcat(out_filename, testname);
