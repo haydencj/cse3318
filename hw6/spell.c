@@ -52,7 +52,8 @@ int binary_search(char** dict, int size, char* token, int* counter, int printOn)
 		if(printOn) printf("dict[%d] = %s\n", m, dict[m]);
 		(*counter)++; //precedence
 	}
-	if(printOn) printf("Not found\n\n");
+
+	if(printOn) printf("Not found\n");
 	return -1; //not found
 }
 
@@ -80,24 +81,52 @@ int check(char* output, char* input, char** dict, int dict_size, int printOn) {
 	// 	token = strtok (NULL, " ,.-");
 	// }
 
-	char buffer[101];
-    int c=0;
-    int i=0;
-	int counter=0, result;
+	char buffer[101] = {'\0'}; //intialize as empty string so no garbage values
+    int c = 0, i = 0, j = 0, counter = 0, result = 0, answer = 0;
 
-    while((c = fgetc(in_fp)) != EOF){
- 
-        if(((ispunct(c)) || (c == 32))) { //32 ascii value for whitespace
-            if(buffer[0] != '\0') {
+    while(c != EOF){
+		c = fgetc(in_fp);
+		//if next character is white space or punc, then we have a word to check
+        if(((ispunct(c)) || (c == 32) || (c == -1))) { //32 ascii value for whitespace, -1 for EOF value
+            if(buffer[0] != '\0') { //deals with multiple separators
                 //do binary search
-				printf("\nbuffer: %s\n", buffer);
 				result = binary_search(dict, dict_size, buffer, &counter, printOn);
+				
+				printf("\n---> |%s| (words compared when searching: %d)\n", buffer, counter);
 				//if found, write to output file
+				if(result >= 0) {
+					printf("	- OK\n\n\n");
+				}
 				//if not found, identify the most similar words in the dictionary and give these options to the user as to what correction to be used for this word in the output file
-				printf("---> |%s| (words compared when searching: %d)\n", buffer, counter);
+				else {
+					printf("-1 - type correction\n");
+					printf(" 0 - leave word as is (do not fix spelling)\n");
+					//find most similar words in dictionary file
+					//edit_distance(buffer, dict[j], 0);
+
+					printf("Enter your choice (from the above options): ");
+					scanf("%d", &answer);
+
+					if(answer == 0) {
+
+					}
+
+					else if(answer == -1) {
+						printf("Enter correct word: ");
+						scanf("%s", buffer);
+					}
+				}
+
+				fprintf(out_fp, "%s", buffer);
+				fprintf(out_fp, "%c", c);
+
                 memset(buffer, 0, 101);
                 i=0;
             }
+
+			else {
+				fprintf(out_fp, "%c", c);
+			}
 
         }
 

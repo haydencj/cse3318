@@ -16,14 +16,13 @@ Then keep putting stuff in that buffer until you hit a separator
 And then just parse the word when you hit a separator
 */
 
-    char buffer[101];
+    char buffer[101] = {'\0'};
     int c=0;
     int i=0;
-    int s_count=0;; //separator count
 
     while(c != EOF){
         c = fgetc(in_fp);
-        if( ((ispunct(c)) || (c == 32)) ) { //32 ascii value for whitespace
+        if( ((ispunct(c)) || (c == 32) || (c == -1)) ) { //32 ascii value for whitespace
             if(buffer[0] != '\0') {
                 fprintf(out_fp,"%s\n", buffer);
                 memset(buffer, 0, 101);
