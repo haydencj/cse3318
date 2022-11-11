@@ -57,6 +57,26 @@ int binary_search(char** dict, int size, char* token, int* counter, int printOn)
 	return -1; //not found
 }
 
+int min_dist(char* string, char** dict, int size) {
+	int* min_dist = malloc(size * sizeof(int));
+	int counter = 0, j = 0;
+	//populate array with all distances
+	for(int i = 0; i < size; i++) {
+		min_dist[i] = edit_distance(string, dict[i], 0);
+	}
+
+	int smallest = min_dist[0];
+	//get smallest number in array
+	for(int i = 1; i<size; i++) {
+		if(smallest > min_dist[i]) {
+			smallest = min_dist[i];
+		}
+	}
+
+	free(min_dist);
+	return smallest;
+}
+
 int check(char* output, char* input, char** dict, int dict_size, int printOn) {
 	FILE* out_fp = fopen(output, "w");
 	FILE* in_fp = fopen(input, "r");
@@ -64,22 +84,6 @@ int check(char* output, char* input, char** dict, int dict_size, int printOn) {
 		printf("File(s) could not be opened.\n");
 		return 0;
 	}
-
-	// char line[101];
-	// char* token;
-	// int counter=0, result;
-
-	// fgets(line, 101, in_fp);
-	// token = strtok (line," ,.!?");
-	// while (token != NULL) {
-	// 	//do binary search
-	// 	result = binary_search(dict, dict_size, token, &counter, printOn);
-	// 	//if found, write to output file
-	// 	//if not found, identify the most similar words in the dictionary and give these options to the user as to what correction to be used for this word in the output file
-	// 	printf("---> |%s| (words compared when searching: %d)\n", token, counter);
-
-	// 	token = strtok (NULL, " ,.-");
-	// }
 
 	char buffer[101] = {'\0'}; //intialize as empty string so no garbage values
     int c = 0, i = 0, j = 0, counter = 0, result = 0, answer = 0;
@@ -99,32 +103,58 @@ int check(char* output, char* input, char** dict, int dict_size, int printOn) {
 				}
 				//if not found, identify the most similar words in the dictionary and give these options to the user as to what correction to be used for this word in the output file
 				else {
+					//find minimum distance of all words in dict
+					int smallest_dist = min_dist(buffer, dict, dict_size);
 					printf("-1 - type correction\n");
 					printf(" 0 - leave word as is (do not fix spelling)\n");
-					//find most similar words in dictionary file
-					//edit_distance(buffer, dict[j], 0);
+					printf("     Minimum distance: %d (computed edit distances: %d)\n", smallest_dist, dict_size);
+					//print all dictionary words with smallest dist
+					printf("     Words that give minimum distance:\n");
+					counter = 0;
+
+					//count number of words with min distance and print them
+					for(int i = 0; i < dict_size; i++) {
+						if((edit_distance(buffer, dict[i], 0)) == smallest_dist) {
+							counter++;
+						}
+					}
+
+					char* words[counter];
+					j=0;
+					for(int i = 0; i < dict_size; i++) {
+						if((edit_distance(buffer, dict[i], 0)) == smallest_dist) {
+							words[j] = dict[i];
+							printf(" %d - %s\n", j+1, words[j]);
+							j++;
+						}
+					}
 
 					printf("Enter your choice (from the above options): ");
 					scanf("%d", &answer);
 
 					if(answer == 0) {
-
+						//do nothing
 					}
 
 					else if(answer == -1) {
 						printf("Enter correct word: ");
 						scanf("%s", buffer);
 					}
+
+					else if(answer > 0) {
+						//words with min distance
+						strcpy(buffer, words[answer-1]);
+					}
 				}
 
 				fprintf(out_fp, "%s", buffer);
-				fprintf(out_fp, "%c", c);
+				if(c != -1) fprintf(out_fp, "%c", c); //if it doesnt have EOF val
 
                 memset(buffer, 0, 101);
                 i=0;
             }
 
-			else {
+			else if(c != -1) { //if character is EOF value, do not print.
 				fprintf(out_fp, "%c", c);
 			}
 
@@ -269,7 +299,7 @@ void spell_check(char * testname, char * dictname, int printOn){
 	
 	printf("\nLoading the dictionary file: %s\n", dictname);
 	char** dict_arr = dict_to_array(dictname, dict_ptr);
-	printf("\nDictionary has size: %d\n\n", dict_size);
+	printf("\nDictionary has size: %d", dict_size);
 
 	if(printOn == 1) {
 		int i;
@@ -297,5 +327,9 @@ void spell_check(char * testname, char * dictname, int printOn){
 		qsort(dict_arr, dict_size, sizeof(*dict_arr), cmpstr);
 		check(out_filename, testname, dict_arr, dict_size, 0);
 	}
+
+	//free dict_arr
+	for(int i = 0; i < dict_size; i++) free(dict_arr[i]);
+	free(dict_arr);
 }
 
