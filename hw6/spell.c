@@ -25,12 +25,14 @@ Student answer:  Theta(MAX_LEN*lg(D))
 /* You can write helper functions here */
 int binary_search(char** dict, int size, char* token, int* counter, int printOn) {
 	//convert to lowercase for search
-	char new_token[strlen(token)];
+	char new_token[strlen(token) + 1];
 
 	for(int i = 0; i<strlen(token); i++){
   		new_token[i] = tolower(token[i]);
 	}
 
+	new_token[strlen(token)] = '\0';
+	
 	if(printOn) printf("\nBinary search for: %s\n", new_token);
 	
 	(*counter) = 0;
@@ -39,10 +41,10 @@ int binary_search(char** dict, int size, char* token, int* counter, int printOn)
 
 	while(left <= right) {
 		int m = (left+right)/2;
-		if(strcmp(new_token, dict[m]) == 0) { // match found
+		if((strcmp(new_token, dict[m])) == 0) { // match found
 			return m; //index of token in dict
 		}
-		else if(strcmp(new_token, dict[m]) < 0) {// <
+		else if((strcmp(new_token, dict[m])) < 0) {// <
 			right = m-1;
 		}
 
@@ -94,6 +96,7 @@ int check(char* output, char* input, char** dict, int dict_size, int printOn) {
         if(((ispunct(c)) || (c == 32) || (c == -1))) { //32 ascii value for whitespace, -1 for EOF value
             if(buffer[0] != '\0') { //deals with multiple separators
                 //do binary search
+				counter = 0;
 				result = binary_search(dict, dict_size, buffer, &counter, printOn);
 				
 				printf("\n---> |%s| (words compared when searching: %d)\n", buffer, counter);
@@ -265,10 +268,9 @@ int edit_distance(char * first_string, char * second_string, int print_table){
 
 	if(print_table == 1) {
 		for (i = 0; i < rows; i++) {
-			printf("%c ", first_string[i]);
-        	for (j = 0; j < cols; j++) {
-            	printf("%d ", table[i][j]);
-        	}
+			for (j = 0; j < cols; j++) {
+				printf(" %d|", table[i][j]);
+			}
         	printf("\n");
     	}
 	}
@@ -291,14 +293,13 @@ printOn - If 1 it will print EXTRA debugging/tracing information (in addition to
 */
 void spell_check(char * testname, char * dictname, int printOn){
 	int dict_size = 0;
-	int* dict_ptr = &dict_size;
 
 	char out_filename[20] = "out_";
 	strcat(out_filename, testname);
 	printf("Corrected output filename: %s\n", out_filename);
 	
 	printf("\nLoading the dictionary file: %s\n", dictname);
-	char** dict_arr = dict_to_array(dictname, dict_ptr);
+	char** dict_arr = dict_to_array(dictname, &dict_size);
 	printf("\nDictionary has size: %d", dict_size);
 
 	if(printOn == 1) {
