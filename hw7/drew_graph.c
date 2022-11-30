@@ -10,11 +10,11 @@ void reverse(int* result, int N);
 void free_mem(int** matrix, int* result, char* color, char** classes, int N);
 
 int main() {
-    char fname[30] = "slides.txt";
+    char fname[30];
 
     printf("This program will read, from a file, a list of classes and their prerequisites and will print the list in which to take classes.\n");
     printf("Enter filename: ");
-    //scanf("%s", fname);
+    scanf("%s", fname);
 
     FILE* fp = fopen(fname, "r");
 
@@ -53,6 +53,8 @@ int main() {
     }
 
     int** matrix = fill_matrix(N, classes, fp);
+    printf("\nAdjacency matrix:\n");
+    print_matrix(matrix, N);
 
     int idx = 0;
     int* result = malloc(sizeof(int) * N);
@@ -91,17 +93,19 @@ int** fill_matrix(int N, char** classes, FILE* fp) {
         }
     }
 
-    int column = 0, row = 0;
+    int d = 0, s = 0;
     char line[30];
     char* token;
 
     rewind(fp);
-    while(fgets(line,1000,fp)) {
+    for(int i = 0; i < N; i++) {
+        fgets(line, 1000, fp);
         token = strtok(line, " \n");
 
         for(int i = 0; i < N; i++) {
             if(!strcmp(token, classes[i])) {
-                column = i;
+                d = i;
+                break;
             }
         }
 
@@ -110,16 +114,16 @@ int** fill_matrix(int N, char** classes, FILE* fp) {
         while(token != NULL) {
             for(int i = 0; i < N; i++) {
                 if(!strcmp(token, classes[i])) {
-                    row = i;
-                    matrix[row][column] = 1;
+                    s = i;
+                    break;
                 }
             }
+
+            matrix[s][d] = 1;
             token = strtok(NULL, " \n");
         }
     }
     fclose(fp);
-    printf("\nAdjacency matrix:\n");
-    print_matrix(matrix, N);
     return matrix;
 }
 
