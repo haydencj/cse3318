@@ -10,11 +10,11 @@ void reverse(int* result, int N);
 void free_mem(int** matrix, int* result, char* color, char** classes, int N);
 
 int main() {
-    char fname[30] = "slides.txt";
+    char fname[30];
 
     printf("This program will read, from a file, a list of classes and their prerequisites and will print the list in which to take classes.\n");
     printf("Enter filename: ");
-    //scanf("%s", fname);
+    scanf("%s", fname);
 
     FILE* fp = fopen(fname, "r");
 
@@ -24,7 +24,7 @@ int main() {
         return 0;
     }
 
-    char line[30];
+    char line[1000];
     char* token;
     int N = 0; //number of vertices 
     while(fgets(line, 1000, fp)) {
@@ -37,7 +37,7 @@ int main() {
     //create 2d char array
 	char **classes = malloc((N) * sizeof(char*)); //create an array of char pointers, one for each string (char *):
 	for (int i = 0; i < N; ++i) {
-    	classes[i] = (char*) malloc(30 * sizeof(char)); //allocate space for each string
+    	classes[i] = (char*) malloc(31 * sizeof(char)); //allocate space for each string
 	}
 
     int i = 0;
@@ -92,7 +92,7 @@ int** fill_matrix(int N, char** classes, FILE* fp) {
     }
 
     int column = 0, row = 0;
-    char line[30];
+    char line[1000];
     char* token;
 
     rewind(fp);
